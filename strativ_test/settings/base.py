@@ -169,3 +169,8 @@ LOGGING = {
             }
         }
 }
+
+
+# env variable
+WEATHER_API_URL = env('WEATHER_API_URL')
+WEATHER_TIME_ZONE = env('WEATHER_TIME_ZONE')
