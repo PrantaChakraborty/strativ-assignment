@@ -77,3 +77,7 @@ def custom_exception_handler(exc, context):
             except Exception as e:
                 logger.exception(e)
     return response
+
+
+class OpenMateoException(Exception):
+    pass
