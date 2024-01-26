@@ -75,3 +75,44 @@ def get_weather_data() -> list[dict[str, int]] | None:
     except OpenMateoException as e:
         logger.exception(e)
         return None
+
+
+def get_temperature(latitude_list, long_list, date) -> list | None:
+    """
+    method to return hourly temperature based on latitude and longitude
+    :param latitude_list: [source_latitude, destination_latitude]
+    :param long_list: [source_longitude, destination_longitude]
+    :param date: [YYYY-MM-DD]
+    :return: [source_temperature, destination_temperature] | None
+    """
+    try:
+        cache_session = requests_cache.CachedSession('.cache', expire_after=3600)
+        retry_session = retry(cache_session, retries=5, backoff_factor=0.2)
+        om = openmeteo_requests.Client(session=retry_session)
+        formatted_datetime = str(date) + 'T14:00'
+        params = {
+            "latitude": latitude_list,
+            "longitude": long_list,
+            "hourly": ["temperature_2m"],
+            "timezone": settings.WEATHER_TIME_ZONE,
+            "start_hour": formatted_datetime,
+            "end_hour": formatted_datetime
+        }
+        responses = om.weather_api(settings.WEATHER_API_URL, params=params)
+
+        response_len = len(responses)
+        temperature = []
+        for item in range(response_len):
+            response = responses[item]
+            hourly = response.Hourly()
+            hourly_variables = list(
+                map(lambda i: hourly.Variables(i),
+                    range(0, hourly.VariablesLength())))
+            for i in hourly_variables:
+                if i.Variable() == Variable.temperature:
+                    v = i.ValuesAsNumpy()
+                    temperature.extend(v)
+        return temperature
+    except OpenMateoException as e:
+        logger.exception(e)
+        return None
