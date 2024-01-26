@@ -123,9 +123,49 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# settings for rest framework
 REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny'
-    ]
+        'rest_framework.permissions.AllowAny',
+    ],
+    'EXCEPTION_HANDLER': 'strativ_test.exceptions.custom_exception_handler',
+
 }
 
+
+
+LOGGING = {
+    'version': 1,
+    # The version number of our log
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{name} {levelname} {asctime} {module}  {message}',
+            'style': '{',
+        },
+    },
+    # app based file handler
+    'handlers': {
+        'weather_file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'weather.log'),
+            'formatter': 'verbose',
+
+        }
+    },
+
+    # app specific logger file
+    'loggers':
+        {
+            # file variable is called in handler which has been defined above
+            'weather': {
+                'handlers': ['weather_file'],
+                'level': 'INFO',
+                'propagate': True,
+            }
+        }
+}
