@@ -25,7 +25,8 @@ from drf_yasg import openapi
 
 
 def home_view(request):
-    html = "<html><body><h1>Strativ AB Assignment</h1></body></html>"
+    html = ("<html><body><h1>Strativ AB Assignment</h1></body>"
+            "<a href=/swagger/>Go to swagger documentation</a></html>")
     return HttpResponse(html)
 
 
