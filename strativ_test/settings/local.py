@@ -4,11 +4,11 @@ settings for local environment
 from .base import *
 
 DEBUG = env('DEBUG')
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3')
+        'ENGINE': env('DB_ENGINE'),
+        'NAME': env('DB_NAME')
     }
 }
